@@ -51,13 +51,39 @@
 // The main airport is London Heathrow Airport.
 
 async function getDashboardData(query) {
-	const destinationsPromise = fetch(`/destinations?search=${query}`).then((dest) => dest.json())
-	const weathersPromise = fetch(`/weathers?search=${query}`).then((weather) => weather.json())
-	const airportsPromise = fetch(`/airports?search=${query}`).then((airport) => airport.json())
+	const BASE_URL = 'https://boolean-spec-frontend.vercel.app/freetestapi'
+
+	const destinationsPromise = fetch(`${BASE_URL}/destinations?search=${query}`).then((dest) =>
+		dest.json()
+	)
+	const weathersPromise = fetch(`${BASE_URL}/weathers?search=${query}`).then((weather) =>
+		weather.json()
+	)
+	const airportsPromise = fetch(`${BASE_URL}/airports?search=${query}`).then((airport) =>
+		airport.json()
+	)
 
 	const [destinations, weathers, airports] = await Promise.all([
 		destinationsPromise,
 		weathersPromise,
 		airportsPromise
 	])
+
+	const dashboardData = {
+		city: destinations[0].name,
+		country: destinations[0].country,
+		temperature: weathers[0].temperature,
+		weather: weathers[0].weather_description,
+		airport: airports[0].name
+	}
+
+	return dashboardData
 }
+
+getDashboardData('london')
+	.then((data) => {
+		console.log(`${data.city} is in ${data.country}.`)
+		console.log(`Today there are ${data.temperature} degrees and the weather is ${data.weather}.`)
+		console.log(`The main airport is ${data.airport}.`)
+	})
+	.catch((error) => console.error(error))
