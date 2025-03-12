@@ -49,3 +49,15 @@
 // London is in United Kingdom.
 // Today there are 18 degrees and the weather is Partly cloudy.
 // The main airport is London Heathrow Airport.
+
+async function getDashboardData(query) {
+	const destinationsPromise = fetch(`/destinations?search=${query}`).then((dest) => dest.json())
+	const weathersPromise = fetch(`/weathers?search=${query}`).then((weather) => weather.json())
+	const airportsPromise = fetch(`/airports?search=${query}`).then((airport) => airport.json())
+
+	const [destinations, weathers, airports] = await Promise.all([
+		destinationsPromise,
+		weathersPromise,
+		airportsPromise
+	])
+}
