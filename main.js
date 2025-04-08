@@ -50,25 +50,22 @@
 // Today there are 18 degrees and the weather is Partly cloudy.
 // The main airport is London Heathrow Airport.
 
+// Funzione asincrona che prende una città come parametro
 async function getDashboardData(query) {
+	// URL base dell'API
 	const BASE_URL = 'https://boolean-spec-frontend.vercel.app/freetestapi'
 
-	const destinationsPromise = fetch(`${BASE_URL}/destinations?search=${query}`).then((dest) =>
-		dest.json()
-	)
-	const weathersPromise = fetch(`${BASE_URL}/weathers?search=${query}`).then((weather) =>
-		weather.json()
-	)
-	const airportsPromise = fetch(`${BASE_URL}/airports?search=${query}`).then((airport) =>
-		airport.json()
-	)
+	// Prima Promise: recupera i dati della destinazione (città e paese)
+	const destinationsPromise = fetch(`${BASE_URL}/destinations?search=${query}`).then((dest) => dest.json())
+	// Seconda Promise: recupera i dati meteo
+	const weathersPromise = fetch(`${BASE_URL}/weathers?search=${query}`).then((weather) => weather.json())
+	// Terza Promise: recupera i dati dell'aeroporto
+	const airportsPromise = fetch(`${BASE_URL}/airports?search=${query}`).then((airport) => airport.json())
 
-	const [destinations, weathers, airports] = await Promise.all([
-		destinationsPromise,
-		weathersPromise,
-		airportsPromise
-	])
+	// Attende che tutte le Promise siano risolte e destruttura i risultati
+	const [destinations, weathers, airports] = await Promise.all([destinationsPromise, weathersPromise, airportsPromise])
 
+	// Crea l'oggetto con i dati aggregati prendendo il primo risultato di ogni array
 	const dashboardData = {
 		city: destinations[0].name,
 		country: destinations[0].country,
@@ -77,9 +74,11 @@ async function getDashboardData(query) {
 		airport: airports[0].name
 	}
 
+	// Restituisce l'oggetto con i dati
 	return dashboardData
 }
 
+// Chiamata alla funzione con 'london' come parametro e gestione del risultato
 getDashboardData('london')
 	.then((data) => {
 		console.log(
@@ -88,4 +87,4 @@ getDashboardData('london')
 				`The main airport is ${data.airport}. \n`
 		)
 	})
-	.catch((error) => console.error(error))
+	.catch((error) => console.error(error)) // Gestione degli errori
